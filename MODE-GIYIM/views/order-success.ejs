@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Başarılı - MODE</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .success-container {
+            text-align: center;
+            padding: 50px 0;
+        }
+        .success-icon {
+            color: #28a745;
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .success-message {
+            margin-bottom: 30px;
+        }
+        .order-details {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .order-number {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header', {user: typeof user !== 'undefined' ? user : null}) %>
+
+    <main>
+        <div class="container success-container">
+            <i class="fas fa-check-circle success-icon"></i>
+            <div class="success-message">
+                <h1>Siparişiniz Başarıyla Alındı!</h1>
+                <p>Siparişiniz için teşekkür ederiz. Siparişiniz en kısa sürede hazırlanacak ve kargoya verilecektir.</p>
+            </div>
+            <div class="order-details">
+                <div class="order-number">
+                    Sipariş Numarası: #<%= orderNumber %>
+                </div>
+                <p><strong>Teslimat Adresi:</strong><br>
+                <%= orderDetails.address %><br>
+                <%= orderDetails.city %> - <%= orderDetails.zipCode %></p>
+                
+                <p><strong>Ödeme Yöntemi:</strong><br>
+                <%= orderDetails.paymentMethod === 'creditCard' ? 'Kredi Kartı' : 'Kapıda Ödeme' %></p>
+                
+                <p><strong>Toplam Tutar:</strong><br>
+                <%= orderDetails.total.toFixed(2) %> TL</p>
+            </div>
+            <div style="margin-top: 30px;">
+                <a href="/" class="btn btn-primary">Alışverişe Devam Et</a>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html> 

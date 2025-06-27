@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap - MODE</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1><a href="/">MODE</a></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Ana Sayfa</a></li>
+                    <li><a href="/kadın">Kadın</a></li>
+                    <li><a href="/erkek">Erkek</a></li>
+                    <li><a href="/aksesuar">Aksesuar</a></li>
+                    <li><a href="/indirim">İndirim</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <a href="/login" class="btn">Giriş Yap</a>
+                <a href="/register" class="btn btn-outline">Kaydol</a>
+                <a href="/sepet" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <h2>Giriş Yap</h2>
+                
+                <% if(error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> <%= error %>
+                    </div>
+                <% } %>
+                
+                <% if(success) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> <%= success %>
+                    </div>
+                <% } %>
+                
+                <form action="/login" method="POST" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">E-posta Adresi</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Şifre</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Beni Hatırla</label>
+                        </div>
+                        <a href="/forgot-password" class="forgot-password">Şifremi Unuttum</a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-full">Giriş Yap</button>
+                </form>
+                
+                <div class="auth-separator">
+                    <span>veya</span>
+                </div>
+                
+                <div class="social-login">
+                    <button class="btn btn-social btn-google">
+                        <i class="fab fa-google"></i> Google ile Giriş Yap
+                    </button>
+                    <button class="btn btn-social btn-facebook">
+                        <i class="fab fa-facebook-f"></i> Facebook ile Giriş Yap
+                    </button>
+                </div>
+                
+                <p class="auth-redirect">
+                    Hesabınız yok mu? <a href="/register">Hemen Kaydolun</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>MODE</h3>
+                    <p>Moda ve stilin buluşma noktası. En son trendler, kaliteli ürünler ve sizin için seçtiğimiz koleksiyonlar.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Kategoriler</h3>
+                    <ul>
+                        <li><a href="/kadın">Kadın</a></li>
+                        <li><a href="/erkek">Erkek</a></li>
+                        <li><a href="/aksesuar">Aksesuar</a></li>
+                        <li><a href="/ayakkabı">Ayakkabı</a></li>
+                        <li><a href="/çanta">Çanta</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Hızlı Linkler</h3>
+                    <ul>
+                        <li><a href="/hakkımızda">Hakkımızda</a></li>
+                        <li><a href="/iletişim">İletişim</a></li>
+                        <li><a href="/sss">Sıkça Sorulan Sorular</a></li>
+                        <li><a href="/iade-politikası">İade Politikası</a></li>
+                        <li><a href="/gizlilik-politikası">Gizlilik Politikası</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>İletişim</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Merkez Mahallesi, Moda Caddesi No:123, İstanbul</p>
+                    <p><i class="fas fa-phone"></i> +90 212 123 45 67</p>
+                    <p><i class="fas fa-envelope"></i> info@modestore.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 MODE. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>

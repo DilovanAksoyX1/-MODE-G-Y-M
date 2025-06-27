@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorilerim - MODE</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .wishlist-container {
+            padding: 30px 0;
+        }
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .wishlist-item {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .wishlist-item:hover {
+            transform: translateY(-5px);
+        }
+        .wishlist-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .wishlist-item-info {
+            padding: 15px;
+        }
+        .wishlist-item-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .wishlist-item-price {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .discounted-price {
+            color: #dc3545;
+            margin-left: 10px;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 14px;
+        }
+        .wishlist-item-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .remove-from-wishlist {
+            color: #dc3545;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .empty-wishlist {
+            text-align: center;
+            padding: 50px 0;
+        }
+        .empty-wishlist i {
+            font-size: 48px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header', {user: typeof user !== 'undefined' ? user : null}) %>
+
+    <main>
+        <div class="container wishlist-container">
+            <h1 class="category-title">Favorilerim</h1>
+            
+            <% if(typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <% if(wishlistItems && wishlistItems.length > 0) { %>
+                <div class="wishlist-grid">
+                    <% wishlistItems.forEach(item => { %>
+                        <div class="wishlist-item" data-id="<%= item.id %>">
+                            <img src="<%= item.imageUrl %>" alt="<%= item.name %>">
+                            <div class="wishlist-item-info">
+                                <div class="wishlist-item-name"><%= item.name %></div>
+                                <div class="wishlist-item-price">
+                                    <% if(item.discountedPrice) { %>
+                                        <span class="original-price"><%= item.price %> TL</span>
+                                        <span class="discounted-price"><%= item.discountedPrice %> TL</span>
+                                    <% } else { %>
+                                        <%= item.price %> TL
+                                    <% } %>
+                                </div>
+                                <div class="wishlist-item-actions">
+                                    <button class="btn btn-primary add-to-cart" data-id="<%= item.productId %>">
+                                        Sepete Ekle
+                                    </button>
+                                    <button class="remove-from-wishlist" data-id="<%= item.id %>">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="empty-wishlist">
+                    <i class="fas fa-heart"></i>
+                    <h2>Favoriler Listeniz Boş</h2>
+                    <p>Henüz favori ürününüz bulunmamaktadır.</p>
+                    <a href="/" class="btn btn-primary">Alışverişe Başla</a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sepete ekle butonları için event listener
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const productId = this.dataset.id;
+                    try {
+                        const response = await fetch('/sepete-ekle', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                productId: productId,
+                                quantity: 1,
+                                size: 'M'
+                            })
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            alert('Ürün sepete eklendi');
+                        } else {
+                            alert(data.message || 'Bir hata oluştu');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Bir hata oluştu');
+                    }
+                });
+            });
+
+            // Favorilerden çıkar butonları için event listener
+            document.querySelectorAll('.remove-from-wishlist').forEach(button => {
+                button.addEventListener('click', async function() {
+                    if (confirm('Bu ürünü favorilerinizden çıkarmak istediğinize emin misiniz?')) {
+                        const wishlistItemId = this.dataset.id;
+                        try {
+                            const response = await fetch('/favorilerden-cikar', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    wishlistItemId: wishlistItemId
+                                })
+                            });
+
+                            const data = await response.json();
+                            if (data.success) {
+                                // Ürünü sayfadan kaldır
+                                this.closest('.wishlist-item').remove();
+                                
+                                // Eğer son ürün de kaldırıldıysa sayfayı yenile
+                                if (document.querySelectorAll('.wishlist-item').length === 0) {
+                                    window.location.reload();
+                                }
+                            } else {
+                                alert(data.message || 'Bir hata oluştu');
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Bir hata oluştu');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

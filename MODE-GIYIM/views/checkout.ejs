@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ödeme - MODE</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .checkout-container {
+            padding: 30px 0;
+        }
+        .checkout-form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .order-summary {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .order-summary h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .order-total {
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .payment-methods {
+            margin: 20px 0;
+        }
+        .payment-method {
+            margin: 10px 0;
+        }
+        .card-inputs {
+            display: none;
+        }
+        .card-inputs.active {
+            display: block;
+        }
+        .card-row {
+            display: flex;
+            gap: 10px;
+        }
+        .card-row .form-group {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header', {user: typeof user !== 'undefined' ? user : null}) %>
+
+    <main>
+        <div class="container checkout-container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="checkout-form">
+                        <h2>Teslimat Bilgileri</h2>
+                        <form id="checkoutForm">
+                            <div class="form-group">
+                                <label for="fullName">Ad Soyad</label>
+                                <input type="text" id="fullName" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">E-posta</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Telefon</label>
+                                <input type="tel" id="phone" name="phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Adres</label>
+                                <input type="text" id="address" name="address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">Şehir</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="zipCode">Posta Kodu</label>
+                                <input type="text" id="zipCode" name="zipCode" required>
+                            </div>
+
+                            <h2>Ödeme Bilgileri</h2>
+                            <div class="payment-methods">
+                                <div class="payment-method">
+                                    <input type="radio" id="creditCard" name="paymentMethod" value="creditCard" checked>
+                                    <label for="creditCard">Kredi Kartı</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="radio" id="payAtDoor" name="paymentMethod" value="payAtDoor">
+                                    <label for="payAtDoor">Kapıda Ödeme</label>
+                                </div>
+                            </div>
+
+                            <div id="cardInputs" class="card-inputs active">
+                                <div class="form-group">
+                                    <label for="cardNumber">Kart Numarası</label>
+                                    <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                                </div>
+                                <div class="card-row">
+                                    <div class="form-group">
+                                        <label for="expiryDate">Son Kullanma Tarihi</label>
+                                        <input type="text" id="expiryDate" name="expiryDate" placeholder="AA/YY" maxlength="5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cvv">CVV</label>
+                                        <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="3">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                                Siparişi Onayla
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="order-summary">
+                        <h3>Sipariş Özeti</h3>
+                        <% let total = 0; %>
+                        <% cartItems.forEach(item => { %>
+                            <% const itemPrice = item.discountedPrice || item.price; %>
+                            <% const itemTotal = itemPrice * item.quantity; %>
+                            <% total += itemTotal; %>
+                            <div class="order-item">
+                                <span><%= item.name %> (x<%= item.quantity %>)</span>
+                                <span><%= itemTotal.toFixed(2) %> TL</span>
+                            </div>
+                        <% }); %>
+                        <div class="order-item">
+                            <span>Kargo</span>
+                            <span>Ücretsiz</span>
+                        </div>
+                        <div class="order-total">
+                            <span>Toplam:</span>
+                            <span><%= total.toFixed(2) %> TL</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('checkoutForm');
+            const cardInputs = document.getElementById('cardInputs');
+            const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+            
+            // Ödeme yöntemi değiştiğinde kart bilgileri formunu göster/gizle
+            paymentMethods.forEach(method => {
+                method.addEventListener('change', function() {
+                    if (this.value === 'creditCard') {
+                        cardInputs.classList.add('active');
+                    } else {
+                        cardInputs.classList.remove('active');
+                    }
+                });
+            });
+
+            // Kart numarası formatlaması
+            const cardNumber = document.getElementById('cardNumber');
+            cardNumber.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(.{4})/g, '$1 ').trim();
+                e.target.value = value;
+            });
+
+            // Son kullanma tarihi formatlaması
+            const expiryDate = document.getElementById('expiryDate');
+            expiryDate.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.slice(0,2) + '/' + value.slice(2);
+                }
+                e.target.value = value;
+            });
+
+            // Form gönderimi
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData);
+                
+                try {
+                    const response = await fetch('/siparisi-tamamla', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        window.location.href = '/siparis-basarili';
+                    } else {
+                        alert(result.message || 'Bir hata oluştu');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Bir hata oluştu');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

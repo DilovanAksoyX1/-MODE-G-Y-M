@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MODE - Moda ve Stil</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>MODE</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Ana Sayfa</a></li>
+                    <li><a href="/kadin">Kadın</a></li>
+                    <li><a href="/erkek">Erkek</a></li>
+                    <li><a href="/aksesuar">Aksesuar</a></li>
+                    <li><a href="/indirim">İndirim</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <% if(user) { %>
+                    <div class="user-info">
+                        <span>Merhaba, <%= user.name %></span>
+                        <a href="/logout" class="btn btn-outline">Çıkış Yap</a>
+                    </div>
+                <% } else { %>
+                    <a href="/login" class="btn">Giriş Yap</a>
+                    <a href="/register" class="btn btn-outline">Kaydol</a>
+                <% } %>
+                <a href="/sepet" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Yeni Sezon Koleksiyonu</h2>
+                <p>En son moda trendleri ve stil önerileri MODE'da sizi bekliyor.</p>
+                <a href="/yeni-sezon" class="btn btn-large">Keşfet</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-categories">
+        <div class="container">
+            <h2 class="section-title">Kategoriler</h2>
+            <div class="category-grid">
+                <div class="category-card">
+                    <img src="/images/category-women.jpg" alt="Kadın Giyim">
+                    <div class="category-info">
+                        <h3>Kadın</h3>
+                        <a href="/kadin" class="btn btn-sm">İncele</a>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <img src="/images/category-men.jpg" alt="Erkek Giyim">
+                    <div class="category-info">
+                        <h3>Erkek</h3>
+                        <a href="/erkek" class="btn btn-sm">İncele</a>
+                    </div>
+                </div>
+                <div class="category-card">
+                    <img src="/images/category-accessories.jpg" alt="Aksesuarlar">
+                    <div class="category-info">
+                        <h3>Aksesuar</h3>
+                        <a href="/aksesuar" class="btn btn-sm">İncele</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-products">
+        <div class="container">
+            <h2 class="section-title">Öne Çıkan Ürünler</h2>
+            <div class="product-grid">
+                <% if(featuredProducts && featuredProducts.length > 0) { %>
+                    <% featuredProducts.forEach(product => { %>
+                        <div class="product-card" data-id="<%= product.id %>" data-price="<%= product.price %>" data-new="<%= product.isNew %>">
+                            <div class="product-image">
+                                <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
+                                <div class="product-badges">
+                                    <% if(product.isNew) { %>
+                                        <span class="badge badge-new">Yeni</span>
+                                    <% } %>
+                                    <% if(product.isOnSale) { %>
+                                        <span class="badge badge-sale">İndirim</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3><%= product.name %></h3>
+                                <p class="product-description"><%= product.description %></p>
+                                <div class="product-price">
+                                    <% if(product.discountedPrice) { %>
+                                        <span class="original-price"><%= product.price %> TL</span>
+                                        <span class="discounted-price"><%= product.discountedPrice %> TL</span>
+                                    <% } else { %>
+                                        <%= product.price %> TL
+                                    <% } %>
+                                </div>
+                                <div class="product-actions">
+                                    <button class="btn btn-icon quick-view" data-id="<%= product.id %>">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-primary add-to-cart" data-id="<%= product.id %>">Sepete Ekle</button>
+                                    <button class="btn btn-icon add-to-wishlist" data-id="<%= product.id %>">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="no-products">
+                        <p>Henüz öne çıkan ürün bulunmamaktadır.</p>
+                    </div>
+                <% } %>
+            </div>
+            <div class="view-all">
+                <a href="/kadin" class="btn btn-outline">Tüm Ürünleri Gör</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter">
+        <div class="container">
+            <h2>Kampanya ve İndirimlerden Haberdar Olun</h2>
+            <p>En yeni ürünler ve özel fırsatlar için bültenimize kaydolun.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="E-posta adresiniz" required>
+                <button type="submit" class="btn">Abone Ol</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>MODE</h3>
+                    <p>Moda ve stilin buluşma noktası. En son trendler, kaliteli ürünler ve sizin için seçtiğimiz koleksiyonlar.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Kategoriler</h3>
+                    <ul>
+                        <li><a href="/kadin">Kadın</a></li>
+                        <li><a href="/erkek">Erkek</a></li>
+                        <li><a href="/aksesuar">Aksesuar</a></li>
+                        <li><a href="/ayakkabi">Ayakkabı</a></li>
+                        <li><a href="/canta">Çanta</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Hızlı Linkler</h3>
+                    <ul>
+                        <li><a href="/hakkımızda">Hakkımızda</a></li>
+                        <li><a href="/iletişim">İletişim</a></li>
+                        <li><a href="/sss">Sıkça Sorulan Sorular</a></li>
+                        <li><a href="/iade-politikası">İade Politikası</a></li>
+                        <li><a href="/gizlilik-politikası">Gizlilik Politikası</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>İletişim</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Merkez Mahallesi, Moda Caddesi No:123, İstanbul</p>
+                    <p><i class="fas fa-phone"></i> +90 212 123 45 67</p>
+                    <p><i class="fas fa-envelope"></i> info@modestore.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 MODE. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Ürün detay modalı için stiller */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 1000px;
+            animation: modalopen 0.5s;
+        }
+        @keyframes modalopen {
+            from {opacity: 0; transform: scale(0.8);}
+            to {opacity: 1; transform: scale(1);}
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #333;
+        }
+        .product-detail {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .product-image {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        .product-image img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+        }
+        .product-info {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        .product-price {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        /* Product actions styles */
+        .product-card .product-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover .product-actions {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Modal specific styles */
+        .modal .product-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            position: relative;
+            opacity: 1;
+            visibility: visible;
+            z-index: 100;
+        }
+        
+        .add-to-wishlist.active i {
+            color: #ff4136;
+        }
+        
+        .product-sizes {
+            margin: 20px 0;
+        }
+        
+        .size-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .size-option {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .size-option:hover {
+            border-color: #333;
+        }
+        
+        .size-option.selected {
+            background-color: #333;
+            color: white;
+            border-color: #333;
+        }
+        
+        .size-option.disabled {
+            background-color: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+            border-color: #ddd;
+        }
+        
+        /* Button styles */
+        .btn-primary {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .modal .btn-primary {
+            display: inline-block;
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        #modalAddToCart {
+            display: block;
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: auto;
+            min-width: 150px;
+        }
+        
+        .quick-view {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+    </style>
+
+    <!-- Ürün detay modalı -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="product-detail">
+                <div class="product-image">
+                    <img id="modalProductImage" src="" alt="Ürün Görseli">
+                </div>
+                <div class="product-info">
+                    <h2 id="modalProductName"></h2>
+                    <p id="modalProductDescription"></p>
+                    <div class="product-price" id="modalProductPrice"></div>
+                    <div class="product-sizes">
+                        <h4>Beden Seçin:</h4>
+                        <div class="size-options">
+                            <div class="size-option" data-size="S">S</div>
+                            <div class="size-option" data-size="M">M</div>
+                            <div class="size-option" data-size="L">L</div>
+                            <div class="size-option" data-size="XL">XL</div>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button id="modalAddToCart" class="btn-primary">Sepete Ekle</button>
+                        <button class="btn btn-icon add-to-wishlist" id="modalAddToWishlist">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ürün verilerini alıyoruz
+            const products = [];
+            
+            <% if(featuredProducts && featuredProducts.length > 0) { %>
+                <% featuredProducts.forEach(function(product) { %>
+                    products.push({
+                        id: <%= product.id %>,
+                        name: '<%= product.name.replace(/'/g, "\\'") %>',
+                        description: '<%= product.description.replace(/'/g, "\\'") %>',
+                        price: <%= product.price %>,
+                        image: '<%= product.imageUrl %>',
+                        category: '<%= product.category %>'
+                    });
+                <% }); %>
+            <% } %>
+            
+            // Sepete ekle butonları için event listener
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Event bubbling'i engelle
+                    
+                    const productId = this.getAttribute('data-id');
+                    const product = products.find(p => p.id == productId);
+                    
+                    if (product) {
+                        openProductModal(product);
+                    }
+                });
+            });
+
+            // Favorilere ekle butonları için event listener
+            const wishlistButtons = document.querySelectorAll('.add-to-wishlist');
+            wishlistButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Event bubbling'i engelle
+                    
+                    const productId = this.getAttribute('data-id');
+                    addToWishlist(productId);
+                });
+            });
+            
+            // Hızlı görünüm butonları için event listener
+            const quickViewButtons = document.querySelectorAll('.quick-view');
+            quickViewButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Event bubbling'i engelle
+                    
+                    const productId = this.getAttribute('data-id');
+                    const product = products.find(p => p.id == productId);
+                    
+                    if (product) {
+                        openProductModal(product);
+                    }
+                });
+            });
+
+            // Ürün kartlarına tıklama olayı
+            const productCards = document.querySelectorAll('.product-card');
+            const modal = document.getElementById('productModal');
+            const closeBtn = document.querySelector('.close');
+            const modalProductImage = document.getElementById('modalProductImage');
+            const modalProductName = document.getElementById('modalProductName');
+            const modalProductDescription = document.getElementById('modalProductDescription');
+            const modalProductPrice = document.getElementById('modalProductPrice');
+            const modalAddToCart = document.getElementById('modalAddToCart');
+            const modalAddToWishlist = document.getElementById('modalAddToWishlist');
+
+            productCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Butonlara tıklandıysa modalı açma
+                    if (e.target.closest('.add-to-cart') || e.target.closest('.add-to-wishlist') || e.target.closest('.quick-view')) {
+                        return;
+                    }
+                    
+                    const productId = this.dataset.id;
+                    const product = products.find(p => p.id == productId);
+                    
+                    if (product) {
+                        openProductModal(product);
+                    }
+                });
+            });
+
+            // Modalı açma fonksiyonu
+            function openProductModal(product) {
+                modalProductImage.src = product.image;
+                modalProductName.textContent = product.name;
+                modalProductDescription.textContent = product.description;
+                modalProductPrice.textContent = product.price + ' TL';
+                
+                // Beden seçimi için event listener'ları ekle
+                const sizeOptions = document.querySelectorAll('.size-option');
+                sizeOptions.forEach(option => {
+                    option.classList.remove('selected');
+                    option.addEventListener('click', function() {
+                        // Önceki seçimi kaldır
+                        sizeOptions.forEach(opt => opt.classList.remove('selected'));
+                        // Yeni seçimi işaretle
+                        this.classList.add('selected');
+                    });
+                });
+                
+                // Modalı aç
+                modal.style.display = 'block';
+                
+                // Modal sepete ekle butonu için event listener
+                modalAddToCart.onclick = function() {
+                    const selectedSize = document.querySelector('.size-option.selected');
+                    if (!selectedSize) {
+                        alert('Lütfen bir beden seçin');
+                        return;
+                    }
+                    
+                    const size = selectedSize.getAttribute('data-size');
+                    addToCart(product.id, size);
+                };
+                
+                // Modal favorilere ekle butonu için event listener
+                if (modalAddToWishlist) {
+                    modalAddToWishlist.onclick = function() {
+                        addToWishlist(product.id);
+                    };
+                }
+            }
+            
+            // Modalı kapatma
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            };
+            
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+            
+            // Sepete ekleme fonksiyonu
+            function addToCart(productId, size) {
+                // Kullanıcı giriş yapmış mı kontrol et
+                fetch('/api/check-auth')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.authenticated) {
+                            // Kullanıcı giriş yapmış, sepete ekle
+                            return fetch('/api/cart/add', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ 
+                                    productId: productId, 
+                                    quantity: 1,
+                                    size: size
+                                })
+                            });
+                        } else {
+                            // Kullanıcı giriş yapmamış, giriş sayfasına yönlendir
+                            window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+                            throw new Error('Giriş yapmalısınız');
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Ürün sepete eklendi!');
+                            // Modalı kapat
+                            modal.style.display = 'none';
+                        } else {
+                            alert('Bir hata oluştu: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+            
+            // Favorilere ekleme fonksiyonu
+            function addToWishlist(productId) {
+                // Kullanıcı giriş yapmış mı kontrol et
+                fetch('/api/check-auth')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.authenticated) {
+                            // Kullanıcı giriş yapmış, favorilere ekle
+                            return fetch('/api/wishlist/add', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ productId: productId })
+                            });
+                        } else {
+                            // Kullanıcı giriş yapmamış, giriş sayfasına yönlendir
+                            window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+                            throw new Error('Giriş yapmalısınız');
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Ürün favorilere eklendi!');
+                            // Favorilere ekle butonunu güncelle
+                            const wishlistButtons = document.querySelectorAll(`.add-to-wishlist[data-id="${productId}"]`);
+                            wishlistButtons.forEach(button => {
+                                button.classList.add('active');
+                                const icon = button.querySelector('i');
+                                if (icon) {
+                                    icon.className = 'fas fa-heart';
+                                }
+                            });
+                        } else {
+                            alert('Bir hata oluştu: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        });
+    </script>
+    <script src="/js/wishlist.js"></script>
+</body>
+</html> 

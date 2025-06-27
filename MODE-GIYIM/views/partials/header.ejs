@@ -1,0 +1,50 @@
+<header>
+    <div class="container">
+        <div class="logo">
+            <h1><a href="/">MODE</a></h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/kadin">Kadın</a></li>
+                <li><a href="/erkek">Erkek</a></li>
+                <li><a href="/aksesuar">Aksesuarlar</a></li>
+                <li><a href="/indirim">İndirim</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <% if(typeof user !== 'undefined' && user) { %>
+                <div class="user-info">
+                    <span>Merhaba, <%= user.name || user.email %></span>
+                    <a href="/logout" class="btn btn-outline">Çıkış Yap</a>
+                </div>
+            <% } else { %>
+                <a href="/login" class="btn">Giriş Yap</a>
+                <a href="/register" class="btn btn-outline">Kaydol</a>
+            <% } %>
+            <a href="/sepet" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </a>
+            <% if(typeof user !== 'undefined' && user) { %>
+                <a href="/favorilerim" class="wishlist-icon">
+                    <i class="fas fa-heart"></i>
+                </a>
+            <% } %>
+        </div>
+    </div>
+</header>
+
+<style>
+    .wishlist-icon {
+        margin-right: 15px;
+        font-size: 1.2em;
+        color: #333;
+        text-decoration: none;
+    }
+    .wishlist-icon:hover {
+        color: #e74c3c;
+    }
+    .wishlist-icon i {
+        transition: color 0.3s ease;
+    }
+</style>

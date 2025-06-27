@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sepetim - MODE</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .cart-container {
+            padding: 30px 0;
+        }
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .cart-table th, .cart-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-table th {
+            background-color: #f9f9f9;
+        }
+        .cart-product-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+        .cart-quantity {
+            display: flex;
+            align-items: center;
+        }
+        .cart-quantity button {
+            width: 30px;
+            height: 30px;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+        }
+        .cart-quantity input {
+            width: 40px;
+            height: 30px;
+            text-align: center;
+            margin: 0 5px;
+        }
+        .cart-remove {
+            color: #dc3545;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .cart-summary {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .cart-summary h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .cart-summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .cart-total {
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 50px 0;
+        }
+        .empty-cart i {
+            font-size: 48px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 1000px;
+            animation: modalopen 0.5s;
+        }
+        @keyframes modalopen {
+            from {opacity: 0; transform: scale(0.8);}
+            to {opacity: 1; transform: scale(1);}
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #333;
+        }
+        .product-detail {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .product-detail-image {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        .product-detail-image img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+        }
+        .product-detail-info {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        .product-detail-price {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .product-detail-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header', {user: typeof user !== 'undefined' ? user : null}) %>
+
+    <main>
+        <div class="container cart-container">
+            <h1 class="category-title">Sepetim</h1>
+            
+            <% if(typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <% if(cartItems && cartItems.length > 0) { %>
+                <div class="row">
+                    <div class="col-md-8">
+                        <table class="cart-table">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Beden</th>
+                                    <th>Fiyat</th>
+                                    <th>Adet</th>
+                                    <th>Toplam</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cartItems">
+                                <% 
+                                let subtotal = 0;
+                                cartItems.forEach(item => { 
+                                    const price = item.discountedPrice || item.price;
+                                    const total = price * item.quantity;
+                                    subtotal += total;
+                                %>
+                                    <tr data-id="<%= item.id %>" data-price="<%= price %>">
+                                        <td>
+                                            <div class="cart-item">
+                                                <img src="<%= item.imageUrl %>" alt="<%= item.name %>" class="cart-product-img">
+                                                <div class="cart-item-details">
+                                                    <h3><%= item.name %></h3>
+                                                    <p>Beden: <%= item.size %></p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><%= item.size %></td>
+                                        <td class="price-cell">
+                                            <% if(item.discountedPrice) { %>
+                                                <span class="original-price"><%= item.price %> TL</span>
+                                                <span class="discounted-price"><%= item.discountedPrice %> TL</span>
+                                            <% } else { %>
+                                                <%= item.price %> TL
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <div class="quantity-controls">
+                                                <button class="quantity-btn minus-btn" data-id="<%= item.id %>">-</button>
+                                                <span class="quantity-value"><%= item.quantity %></span>
+                                                <button class="quantity-btn plus-btn" data-id="<%= item.id %>">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="item-total"><%= total.toFixed(2) %> TL</td>
+                                        <td>
+                                            <button class="remove-btn" data-id="<%= item.id %>">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="cart-summary">
+                            <h3>Sipariş Özeti</h3>
+                            <div class="cart-summary-item">
+                                <span>Ara Toplam:</span>
+                                <span><%= subtotal.toFixed(2) %> TL</span>
+                            </div>
+                            <div class="cart-summary-item">
+                                <span>Kargo:</span>
+                                <span>Ücretsiz</span>
+                            </div>
+                            <div class="cart-summary-item cart-total">
+                                <span>Toplam:</span>
+                                <span><%= subtotal.toFixed(2) %> TL</span>
+                            </div>
+                            <a href="/odeme" class="btn btn-primary btn-block" style="width: 100%; margin-top: 20px;">
+                                Siparişi Tamamla
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h2>Sepetiniz Boş</h2>
+                    <p>Sepetinizde henüz ürün bulunmamaktadır.</p>
+                    <a href="/" class="btn btn-primary">Alışverişe Başla</a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Artı ve eksi butonlarını seç
+            const plusButtons = document.querySelectorAll('.plus-btn');
+            const minusButtons = document.querySelectorAll('.minus-btn');
+            const removeButtons = document.querySelectorAll('.remove-btn');
+
+            // Artı butonları için event listener
+            plusButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const itemId = this.dataset.id;
+                    const row = this.closest('tr');
+                    const quantitySpan = row.querySelector('.quantity-value');
+                    const currentQuantity = parseInt(quantitySpan.textContent);
+                    
+                    try {
+                        const response = await fetch('/sepet-guncelle', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                cartItemId: itemId,
+                                quantity: currentQuantity + 1
+                            })
+                        });
+
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            quantitySpan.textContent = currentQuantity + 1;
+                            updateRowTotal(row);
+                            updateCartSummary();
+                        } else {
+                            alert(data.message || 'Bir hata oluştu');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Bir hata oluştu');
+                    }
+                });
+            });
+
+            // Eksi butonları için event listener
+            minusButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const itemId = this.dataset.id;
+                    const row = this.closest('tr');
+                    const quantitySpan = row.querySelector('.quantity-value');
+                    const currentQuantity = parseInt(quantitySpan.textContent);
+                    
+                    if (currentQuantity > 1) {
+                        try {
+                            const response = await fetch('/sepet-guncelle', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    cartItemId: itemId,
+                                    quantity: currentQuantity - 1
+                                })
+                            });
+
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                quantitySpan.textContent = currentQuantity - 1;
+                                updateRowTotal(row);
+                                updateCartSummary();
+                            } else {
+                                alert(data.message || 'Bir hata oluştu');
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Bir hata oluştu');
+                        }
+                    }
+                });
+            });
+
+            // Silme butonları için event listener
+            removeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.dataset.id;
+                    if (confirm('Bu ürünü sepetten çıkarmak istediğinize emin misiniz?')) {
+                        removeFromCart(itemId);
+                    }
+                });
+            });
+
+            // Satır toplamını güncelleme fonksiyonu
+            function updateRowTotal(row) {
+                const priceCell = row.querySelector('td:nth-child(3)');
+                const quantitySpan = row.querySelector('.quantity-value');
+                const totalCell = row.querySelector('.item-total');
+                
+                let price;
+                const discountedPrice = priceCell.querySelector('.discounted-price');
+                if (discountedPrice) {
+                    price = parseFloat(discountedPrice.textContent.replace(' TL', ''));
+                } else {
+                    price = parseFloat(priceCell.textContent.replace(' TL', ''));
+                }
+                
+                const quantity = parseInt(quantitySpan.textContent);
+                const total = price * quantity;
+                totalCell.textContent = total.toFixed(2) + ' TL';
+            }
+
+            // Sepet özetini güncelleme fonksiyonu
+            function updateCartSummary() {
+                let subtotal = 0;
+                document.querySelectorAll('.item-total').forEach(totalCell => {
+                    const price = parseFloat(totalCell.textContent.replace(' TL', ''));
+                    subtotal += price;
+                });
+                
+                const subtotalElement = document.querySelector('.cart-summary-item:first-child span:last-child');
+                const totalElement = document.querySelector('.cart-total span:last-child');
+                
+                if (subtotalElement && totalElement) {
+                    subtotalElement.textContent = subtotal.toFixed(2) + ' TL';
+                    totalElement.textContent = subtotal.toFixed(2) + ' TL';
+                }
+            }
+
+            // Sepetten ürün çıkarma fonksiyonu
+            function removeFromCart(cartItemId) {
+                fetch('/sepetten-cikar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cartItemId: cartItemId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Bir hata oluştu');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Bir hata oluştu');
+                });
+            }
+        });
+    </script>
+
+    <!-- Ürün detay modalı -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-body">
+                <div class="product-detail">
+                    <div class="product-detail-image">
+                        <img id="modalProductImage" src="" alt="">
+                    </div>
+                    <div class="product-detail-info">
+                        <h2 id="modalProductName"></h2>
+                        <p id="modalProductDescription"></p>
+                        <p class="product-detail-price" id="modalProductPrice"></p>
+                        <div class="product-detail-actions">
+                            <button class="btn btn-primary" id="modalAddToCart">Sepete Ekle</button>
+                            <button class="btn btn-outline" id="modalAddToWishlist">
+                                <i class="fas fa-heart"></i> Favorilere Ekle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
